@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minecraft — Світ дробів</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;padding:15px;
+ font-family:Arial,sans-serif;color:white;text-align:center;
+ background:linear-gradient(#70c5ec 0 35%,#65a83f 35% 65%,#765033 65%);
+}
+.container{max-width:850px;margin:auto}
+h1{font-size:clamp(26px,5vw,42px);text-shadow:3px 4px #333}
+.panel{
+ background:#343b35;border:5px solid #20251e;
+ box-shadow:0 6px #151915;padding:20px;
+ margin:15px auto;border-radius:5px;
+}
+.stats{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap}
+.stat{background:#202820;padding:12px;border:2px solid #888}
+.blocks{font-size:35px;margin:15px}
+button,input{
+ padding:13px;margin:7px;font-size:17px;
+ border:3px solid #222;border-radius:3px
+}
+button{
+ background:#70b946;color:white;font-weight:bold;
+ cursor:pointer;box-shadow:0 4px #315c23
+}
+button:hover{background:#91d35d}
+input{width:min(230px,90%);text-align:center}
+.hidden{display:none!important}
+#question{font-size:25px;line-height:1.5}
+#feedback{font-size:19px;min-height:35px}
+.progress{height:18px;background:#151515;margin:15px 0}
+#bar{height:100%;background:#7cdb43;width:0}
+select{padding:10px;font-size:17px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>⛏️ MINECRAFT: СВІТ ДРОБІВ</h1>
+<div class="blocks">🟩 🟫 💎 🟩 🧱</div>
+
+<div class="panel">
+ <div class="stats">
+  <div class="stat">💎 Бали: <b id="score">0</b></div>
+  <div class="stat">❤️ Життя: <b id="lives">5</b></div>
+  <div class="stat">🌍 Рівень: <b id="level">1</b>/5</div>
+ </div>
+ <div class="progress"><div id="bar"></div></div>
+ <p id="progress">Почни математичну пригоду!</p>
+</div>
+
+<div class="panel" id="start">
+ <h2>🌍 Ласкаво просимо, Майстре дробів!</h2>
+ <p>Пройди п'ять світів, розв'язуй приклади та збирай діаманти!</p>
+ <p>Обери складність:</p>
+ <select id="difficulty">
+  <option value="1">🟢 Легка</option>
+  <option value="2">🟡 Середня</option>
+  <option value="3">🔴 Складна</option>
+ </select>
+ <br>
+ <button onclick="startGame()">ПОЧАТИ ГРУ ▶</button>
+</div>
+
+<div class="panel hidden" id="game">
+ <h2 id="levelName"></h2>
+ <div class="blocks" id="scene"></div>
+ <p id="question"></p>
+ <input id="answer" placeholder="Наприклад: 3/4">
+ <br>
+ <button id="check" onclick="checkAnswer()">ПЕРЕВІРИТИ ✔</button>
+ <div id="feedback"></div>
+ <div id="explanation"></div>
+ <button id="next" class="hidden" onclick="nextTask()">ДАЛІ ➜</button>
+ <p>Відповідь: 3/4, 2 або 1 1/2</p>
+</div>
+
+<div class="panel hidden" id="finish">
+ <h2>🏆 ПРИГОДУ ЗАВЕРШЕНО!</h2>
+ <div class="blocks">🏆 💎 🏆</div>
+ <h2 id="result"></h2>
+ <p id="resultText"></p>
+ <button onclick="location.reload()">ГРАТИ ЩЕ РАЗ ↻</button>
+ <button onclick="certificate()">ОТРИМАТИ СЕРТИФІКАТ</button>
+</div>
+</div>
+
+<script>
+const worlds=[
+ ["Множення звичайних дробів","🌳 🧱 💎 🌳"],
+ ["Ділення звичайних дробів","🪨 💎 🧱 🪨"],
+ ["Мішані числа","🏠 🧱 💎 🏠"],
+ ["Знаходження дробу від числа","🌾 🪵 💎 🌾"],
+ ["Знаходження числа за дробом","🏰 💎 🏆 🏰"]
+];
+
+let score=0,lives=5,level=0,task=0;
+let current=null,answered=false,difficulty=1;
+const $=id=>document.getElementById(id);
+
+function gcd(a,b){return b===0?Math.abs(a):gcd(b,a%b)}
+function R(n,d=1){
+ if(d<0){n=-n;d=-d}
+ let g=gcd(n,d);
+ return {n:n/g,d:d/g};
+}
+function mul(a,b){return R(a.n*b.n,a.d*b.d)}
+function div(a,b){return R(a.n*b.d,a.d*b.n)}
+function show(a){return a.d===1?""+a.n:a.n+"/"+a.d}
+function mixed(a){
+ let w=Math.floor(a.n/a.d),r=a.n%a.d;
+ if(!r)return ""+w;
+ return w===0?show(a):w+" "+r+"/"+a.d;
+}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function make(){
+ let a,b;
+ let max=difficulty===1?4:difficulty===2?8:12;
+ let den=difficulty===1?5:difficulty===2?9:14;
+ let type=level;
+ if(type===0||type===1||type===2){
+  a=R(rand(1,max),rand(2,den));
+  b=R(rand(1,max),rand(2,den));
+  if(type===2){
+   a=R(rand(3,12),rand(2,5));
+   b=R(rand(3,12),rand(2,5));
+  }
+  if(type===0)return {q:show(a)+" × "+show(b)+" = ?",ans:mul(a,b),
+   explain:"Множимо чисельник на чисельник, знаменник на знаменник."};
+  if(type===1)return {q:show(a)+" : "+show(b)+" = ?",ans:div(a,b),
+   explain:"Ділення замінюємо множенням на обернений дріб."};
+  return Math.random()<.5?
+   {q:mixed(a)+" × "+mixed(b)+" = ?",ans:mul(a,b),
+    explain:"Перетвори мішані числа на неправильні дроби та перемнож."}:
+   {q:mixed(a)+" : "+mixed(b)+" = ?",ans:div(a,b),
+    explain:"Перетвори мішані числа на неправильні дроби та поділи."};
+ }
+ let d=rand(2,den),n=rand(1,d-1),k=rand(2,max*2);
+ if(type===3){
+  return {q:"Знайди "+n+"/"+d+" від числа "+(d*k)+".",
+   ans:R(n*k),explain:"Поділи число на знаменник і помнож на чисельник."};
+ }
+ return {q:n+"/"+d+" числа дорівнює "+(n*k)+". Знайди число.",
+  ans:R(d*k),explain:"Значення дробу поділи на чисельник і помнож на знаменник."};
+}
+function parse(s){
+ s=s.trim().replace(/\s/g,"");
+ let p=s.split("/");
+ if(p.length===1){
+  let n=Number(p[0]);
+  return Number.isInteger(n)?R(n):null;
+ }
+ if(p.length!==2)return null;
+ let n=Number(p[0]),d=Number(p[1]);
+ if(!Number.isInteger(n)||!Number.isInteger(d)||d===0)return null;
+ return R(n,d);
+}
+function startGame(){
+ difficulty=Number($("difficulty").value);
+ $("start").classList.add("hidden");
+ $("game").classList.remove("hidden");
+ load();
+}
+function load(){
+ current=make();answered=false;
+ $("levelName").textContent=worlds[level][0];
+ $("scene").textContent=worlds[level][1];
+ $("question").textContent=current.q;
+ $("answer").value="";
+ $("answer").disabled=false;
+ $("feedback").textContent="";
+ $("explanation").textContent="";
+ $("check").classList.remove("hidden");
+ $("next").classList.add("hidden");
+ update();
+ $("answer").focus();
+}
+function checkAnswer(){
+ if(answered)return;
+ let a=parse($("answer").value);
+ if(!a){
+  $("feedback").textContent="⚠️ Введи відповідь у форматі 3/4 або 2.";
+  return;
+ }
+ answered=true;
+ let correct=a.n===current.ans.n&&a.d===current.ans.d;
+ if(correct){
+  score+=10*difficulty;
+  $("feedback").textContent="✅ Правильно! +"+(10*difficulty)+" діамантів!";
+  $("feedback").style.color="#9cff70";
+ }else{
+  lives--;
+  $("feedback").textContent="❌ Правильна відповідь: "+show(current.ans);
+  $("feedback").style.color="#ffaaaa";
+ }
+ $("explanation").textContent="💡 "+current.explain;
+ $("answer").disabled=true;
+ $("check").classList.add("hidden");
+ $("next").classList.remove("hidden");
+ update();
+}
+function nextTask(){
+ if(lives<=0){finish();return}
+ task++;
+ if(task>=5){
+  level++;task=0;
+  if(level>=5){finish();return}
+ }
+ load();
+}
+function update(){
+ $("score").textContent=score;
+ $("lives").textContent=lives;
+ $("level").textContent=Math.min(level+1,5);
+ let done=level*5+task;
+ $("bar").style.width=(done/25*100)+"%";
+ $("progress").textContent="Виконано завдань: "+done+" із 25";
+}
+function finish(){
+ $("game").classList.add("hidden");
+ $("finish").classList.remove("hidden");
+ $("result").textContent="Твій результат: "+score+" 💎";
+ $("resultText").textContent=lives>0?
+ "Вітаємо! Ти став Майстром дробів!":
+ "Спробуй ще раз! Ти зможеш пройти всі світи!";
+}
+function certificate(){
+ let name=prompt("Введи своє ім'я для сертифіката:");
+ if(!name)return;
+ let w=window.open("","_blank");
+ w.document.write(`<html><body style="text-align:center;font-family:Arial;padding:50px;border:12px solid #568c37">
+ <h1>🏆 СЕРТИФІКАТ 🏆</h1><h2>МАЙСТЕР ДРОБІВ</h2>
+ <h2>${name.replace(/[<>&"]/g,"")}</h2>
+ <p>Успішно пройшов математичну пригоду</p>
+ <h2>MINECRAFT: СВІТ ДРОБІВ</h2>
+ <h3>Результат: ${score} діамантів 💎</h3>
+ <p>6 клас НУШ</p><p>Дата: ${new Date().toLocaleDateString("uk-UA")}</p>
+ <button onclick="print()">Друкувати сертифікат</button>
+ </body></html>`);
+}
+$("answer").addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!answered)checkAnswer();
+});
+</script>
+</body>
+</html>
