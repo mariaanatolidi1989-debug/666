@@ -4,441 +4,507 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minecraft: Математична пригода</title>
+<title>Minecraft — Математична пригода</title>
+
 <style>
-* { box-sizing: border-box; }
+* { box-sizing:border-box; }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: #fff;
-  background: #263b2b;
-  background-image:
-    linear-gradient(45deg,#314d35 25%,transparent 25%),
-    linear-gradient(-45deg,#314d35 25%,transparent 25%);
-  background-size: 40px 40px;
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#253c29;
+ color:white;
 }
 
 header {
-  text-align: center;
-  padding: 24px 12px;
-  background: #386b32;
-  border-bottom: 7px solid #234522;
+ text-align:center;
+ padding:25px 10px;
+ background:#477d38;
+ border-bottom:8px solid #254b27;
 }
 
-h1 { margin: 0; font-size: clamp(23px,5vw,38px); }
-header p { margin-bottom: 0; }
+header h1 {font-size:clamp(23px,5vw,36px);}
 
-.container {
-  max-width: 950px;
-  margin: auto;
-  padding: 18px;
-}
-
-.progress {
-  background: #172719;
-  height: 17px;
-  border: 3px solid #111;
-  margin: 15px 0;
-}
-
-#progressBar {
-  width: 0%;
-  height: 100%;
-  background: #8bd34b;
-  transition: width .3s;
-}
+.container {max-width:950px;margin:auto;padding:18px;}
 
 .stations {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
-  gap: 10px;
-  margin-bottom: 20px;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+ margin:20px 0;
 }
 
 .station {
-  padding: 13px 7px;
-  background: #657d45;
-  border: 4px solid #273c22;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
+ padding:14px 5px;
+ background:#587b43;
+ color:white;
+ border:4px solid #263e23;
+ font-weight:bold;
+ cursor:pointer;
 }
 
-.station.active { background: #d29b38; color: #222; }
-.station.completed { background: #318a49; }
+.station.active {background:#e0a637;color:#222;}
+.station.done {background:#268c49;}
 
 .panel {
-  background: #e6e6d2;
-  color: #222;
-  border: 6px solid #5a452b;
-  padding: 20px;
-  box-shadow: 0 8px 0 #172719;
+ background:#e9e9d9;
+ color:#222;
+ padding:20px;
+ border:7px solid #79542f;
+ box-shadow:0 8px 0 #142317;
 }
 
 .rule {
-  background: #fff0b5;
-  border: 4px solid #c38b24;
-  padding: 15px;
-  margin: 15px 0;
-  color: #35290d;
-  line-height: 1.5;
+ background:#fff0b8;
+ color:#342608;
+ border:5px solid #d69c2c;
+ padding:18px;
+ margin:15px 0 22px;
+ border-radius:5px;
 }
 
-.rule h3 { margin: 0 0 8px; }
+.rule h3 {
+ margin:0 0 12px;
+ font-size:22px;
+}
+
+.rule p {
+ margin:0;
+ font-size:18px;
+ line-height:1.55;
+}
+
+.rule .hint {
+ margin-top:10px;
+ font-weight:bold;
+ color:#725016;
+}
 
 .question {
-  background: white;
-  border: 3px solid #888;
-  padding: 18px;
-  margin: 15px 0;
-  text-align: center;
-  font-size: 23px;
-  font-weight: bold;
+ background:white;
+ border:3px solid #9b9b9b;
+ padding:25px 10px;
+ text-align:center;
+ font-size:25px;
+ margin:15px 0;
+ min-height:90px;
 }
 
 .answers {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(110px,1fr));
-  gap: 12px;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:12px;
 }
 
 .answer {
-  background: #4b7840;
-  border: 4px solid #294c26;
-  color: white;
-  padding: 14px;
-  cursor: pointer;
-  font-size: 20px;
-  font-weight: bold;
-  min-height: 65px;
+ background:#4d8140;
+ border:4px solid #294d27;
+ color:white;
+ padding:18px 8px;
+ font-size:22px;
+ cursor:pointer;
+ min-height:75px;
 }
 
-.answer:hover { background: #6a9b4e; }
-.answer:disabled { cursor: default; opacity: .8; }
+.answer:disabled {opacity:.8;cursor:default;}
 
 .feedback {
-  margin-top: 18px;
-  padding: 15px;
-  font-size: 17px;
-  line-height: 1.6;
-  display: none;
+ display:none;
+ margin-top:20px;
+ padding:18px;
+ font-size:18px;
+ line-height:1.7;
 }
 
-.correct { background: #c8edc3; border: 3px solid #398c3c; }
-.wrong { background: #f5c8c8; border: 3px solid #b83c3c; }
+.correct {background:#c9edc5;border:3px solid #348c3a;}
+.wrong {background:#f5cccc;border:3px solid #b53c3c;}
 
-button.next {
-  display: block;
-  margin: 20px auto 0;
-  padding: 14px 25px;
-  background: #d99b32;
-  color: #222;
-  border: 4px solid #80551c;
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
+.next {
+ display:block;
+ margin:20px auto 0;
+ padding:15px 25px;
+ background:#e4a432;
+ border:4px solid #865b20;
+ font-size:18px;
+ font-weight:bold;
+ cursor:pointer;
 }
+
+.progress {
+ height:17px;
+ background:#111;
+ border:3px solid #111;
+ margin:15px 0;
+}
+
+#bar {height:100%;width:0;background:#8bda4e;}
+
+.score {font-size:18px;}
 
 .fraction {
-  display: inline-flex;
-  flex-direction: column;
-  vertical-align: middle;
-  text-align: center;
-  line-height: 1.15;
-  margin: 0 3px;
-  font-size: .9em;
+ display:inline-flex;
+ flex-direction:column;
+ vertical-align:middle;
+ text-align:center;
+ align-items:stretch;
+ line-height:1.05;
+ margin:0 5px;
+ font-size:0.95em;
+ min-width:27px;
 }
 
-.fraction .top {
-  border-bottom: 2px solid currentColor;
-  padding: 1px 5px 3px;
+.numerator {
+ display:block;
+ padding:2px 5px 4px;
+ border-bottom:2px solid currentColor;
 }
 
-.fraction .bottom { padding: 3px 5px 1px; }
-
-.footer {
-  text-align: center;
-  padding: 25px;
-  color: #e7eddb;
+.denominator {
+ display:block;
+ padding:4px 5px 2px;
 }
 
+.mixed {
+ display:inline-flex;
+ align-items:center;
+ vertical-align:middle;
+ gap:3px;
+ white-space:nowrap;
+}
+
+.footer {text-align:center;padding:25px;}
+
+@media(max-width:550px) {
+ .stations {grid-template-columns:repeat(2,1fr);}
+ .answers {grid-template-columns:repeat(2,1fr);}
+ .panel {padding:12px;}
+ .question {font-size:21px;}
+}
 </style>
 </head>
+
 <body>
 
 <header>
-  <h1>⛏️ Minecraft: Математична пригода</h1>
-  <p>Досліджуй світ дробів, проходь станції та здобувай блоки знань!</p>
+<h1>⛏️ MINECRAFT: МАТЕМАТИЧНА ПРИГОДА</h1>
+<p>Подорож світом звичайних дробів — 6 клас</p>
 </header>
 
 <div class="container">
 
-  <h3>🧭 Карта математичних станцій</h3>
+<h3>🗺️ ОБЕРИ МАТЕМАТИЧНУ СТАНЦІЮ</h3>
 
-  <div class="progress">
-    <div id="progressBar"></div>
-  </div>
+<div class="progress"><div id="bar"></div></div>
+<div class="score" id="score">⭐ Правильних відповідей: 0</div>
 
-  <p id="score">⭐ Правильні відповіді: 0</p>
+<div class="stations" id="stations"></div>
 
-  <div class="stations" id="stations"></div>
+<div class="panel" id="game">
 
-  <div class="panel" id="game">
-    <h2 id="stationTitle"></h2>
+<h2 id="title"></h2>
 
-    <div class="rule">
-      <h3>📘 Правило станції</h3>
-      <div id="ruleText"></div>
-    </div>
+<div class="rule">
+<h3>📘 ПРАВИЛО СТАНЦІЇ</h3>
+<p id="ruleText"></p>
+<div class="hint" id="hint"></div>
+</div>
 
-    <h3 id="taskNumber"></h3>
-    <div class="question" id="question"></div>
-    <div class="answers" id="answers"></div>
-    <div class="feedback" id="feedback"></div>
+<h3 id="number"></h3>
 
-    <button class="next" id="nextBtn" onclick="nextQuestion()" hidden>
-      Наступне завдання ➜
-    </button>
-  </div>
+<div class="question" id="question"></div>
 
+<div class="answers" id="answers"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button class="next" id="next" hidden onclick="nextTask()">
+НАСТУПНЕ ЗАВДАННЯ ➜
+</button>
+
+</div>
 </div>
 
 <div class="footer">
-  🏆 Кожна правильна відповідь наближає тебе до перемоги!
+🏆 Здобудь усі математичні досягнення Minecraft!
 </div>
 
 <script>
 
-// Вертикальний запис звичайного дробу
-function f(a,b) {
-  return `<span class="fraction">
-    <span class="top">${a}</span>
-    <span class="bottom">${b}</span>
-  </span>`;
+// ФОРМАТ ДРОБУ — ТІЛЬКИ ВЕРТИКАЛЬНИЙ
+function F(a,b) {
+ return `<span class="fraction">
+ <span class="numerator">${a}</span>
+ <span class="denominator">${b}</span>
+ </span>`;
 }
 
-// Математичні станції
-const stations = [
+// МІШАНЕ ЧИСЛО
+function M(w,a,b) {
+ return `<span class="mixed">${w}${F(a,b)}</span>`;
+}
+
+function T(q,answers,right,explanation) {
+ return {q,answers,right,explanation};
+}
+
+const data = [
+
 {
  name:"🟩 Множення дробів",
- rule:"Щоб перемножити дроби, потрібно перемножити чисельники між собою, а знаменники — між собою. За можливості скороти результат.",
+ rule:"Щоб перемножити два звичайні дроби, потрібно перемножити чисельники між собою, а знаменники — між собою. За можливості скоротити результат.",
+ hint:"Запам'ятай: чисельник · чисельник; знаменник · знаменник.",
  tasks:[
-  {q:`${f(2,3)} · ${f(3,4)} = ?`,
-   a:[f(1,2),f(2,7),f(3,4)],
-   correct:0,
-   explanation:`${f(2,3)} · ${f(3,4)} = ${f(6,12)} = ${f(1,2)}. Перемножили чисельники та знаменники.`},
-  {q:`${f(3,5)} · ${f(2,3)} = ?`,
-   a:[f(2,5),f(3,8),f(5,6)],
-   correct:0,
-   explanation:`${f(3,5)} · ${f(2,3)} = ${f(6,15)} = ${f(2,5)}.`}
+ T(
+ `${F(2,3)} · ${F(3,4)} = ?`,
+ [F(1,2),F(2,7),F(3,4)],
+ 0,
+ `${F(2,3)} · ${F(3,4)} = ${F(6,12)} = ${F(1,2)}`
+ ),
+ T(
+ `${F(3,5)} · ${F(2,3)} = ?`,
+ [F(2,5),F(3,8),F(5,6)],
+ 0,
+ `${F(3,5)} · ${F(2,3)} = ${F(6,15)} = ${F(2,5)}`
+ )
  ]
 },
+
 {
  name:"🟦 Множення мішаних чисел",
- rule:"Спочатку перетвори мішані числа на неправильні дроби, а потім перемнож їх.",
+ rule:"Перед множенням мішані числа потрібно перетворити на неправильні дроби. Потім перемножити чисельники та знаменники.",
+ hint:"Запам'ятай: спочатку перетворюємо, потім множимо!",
  tasks:[
-  {q:`1 ${f(1,2)} · 2 = ?`,
-   a:[3,f(5,2),4],
-   correct:0,
-   explanation:`1 ${f(1,2)} = ${f(3,2)}. Тоді ${f(3,2)} · 2 = ${f(6,2)} = 3.`},
-  {q:`2 ${f(1,3)} · 1 ${f(1,2)} = ?`,
-   a:[3 ${f(1,2)},3,4],
-   correct:0,
-   explanation:`2 ${f(1,3)} = ${f(7,3)}, 1 ${f(1,2)} = ${f(3,2)}. Добуток дорівнює ${f(21,6)} = 3 ${f(1,2)}.`}
+ T(
+ `${M(1,1,2)} · 2 = ?`,
+ [3,F(5,2),4],
+ 0,
+ `${M(1,1,2)} = ${F(3,2)}. <br>
+ ${F(3,2)} · 2 = ${F(6,2)} = 3`
+ ),
+ T(
+ `${M(2,1,3)} · ${M(1,1,2)} = ?`,
+ [M(3,1,2),3,4],
+ 0,
+ `${M(2,1,3)} = ${F(7,3)}, 
+ ${M(1,1,2)} = ${F(3,2)}. <br>
+ ${F(7,3)} · ${F(3,2)} = ${F(21,6)} = ${M(3,1,2)}`
+ )
  ]
 },
+
 {
  name:"🟨 Ділення дробів",
- rule:"Щоб поділити один дріб на інший, потрібно перший дріб помножити на дріб, обернений до другого.",
+ rule:"Щоб поділити один звичайний дріб на інший, потрібно перший дріб помножити на дріб, обернений до другого.",
+ hint:"Запам'ятай: ділення замінюємо множенням, другий дріб перевертаємо.",
  tasks:[
-  {q:`${f(2,3)} : ${f(4,5)} = ?`,
-   a:[f(5,6),f(2,5),f(8,15)],
-   correct:0,
-   explanation:`${f(2,3)} : ${f(4,5)} = ${f(2,3)} · ${f(5,4)} = ${f(10,12)} = ${f(5,6)}.`},
-  {q:`${f(3,4)} : ${f(1,2)} = ?`,
-   a:[1 ${f(1,2)},f(3,8),2],
-   correct:0,
-   explanation:`${f(3,4)} · ${f(2,1)} = ${f(6,4)} = 1 ${f(1,2)}.`}
+ T(
+ `${F(2,3)} : ${F(4,5)} = ?`,
+ [F(5,6),F(2,5),F(8,15)],
+ 0,
+ `${F(2,3)} : ${F(4,5)} = ${F(2,3)} · ${F(5,4)} = ${F(10,12)} = ${F(5,6)}`
+ ),
+ T(
+ `${F(3,4)} : ${F(1,2)} = ?`,
+ [M(1,1,2),F(3,8),2],
+ 0,
+ `${F(3,4)} : ${F(1,2)} = ${F(3,4)} · ${F(2,1)} = ${F(6,4)} = ${M(1,1,2)}`
+ )
  ]
 },
+
 {
  name:"🟧 Ділення мішаних чисел",
- rule:"Перетвори мішані числа на неправильні дроби, заміни ділення множенням на обернений дріб і виконай обчислення.",
+ rule:"Мішані числа перетвори на неправильні дроби. Ділення заміни множенням на обернений дріб і виконай обчислення.",
+ hint:"Запам'ятай: перетворити → перевернути другий дріб → помножити.",
  tasks:[
-  {q:`1 ${f(1,2)} : ${f(1,2)} = ?`,
-   a:[3,2,1],
-   correct:0,
-   explanation:`1 ${f(1,2)} = ${f(3,2)}. ${f(3,2)} : ${f(1,2)} = ${f(3,2)} · ${f(2,1)} = 3.`},
-  {q:`2 : 1 ${f(1,3)} = ?`,
-   a:[f(3,2),f(2,3),f(4,3)],
-   correct:0,
-   explanation:`1 ${f(1,3)} = ${f(4,3)}. 2 : ${f(4,3)} = 2 · ${f(3,4)} = ${f(3,2)}.`}
+ T(
+ `${M(1,1,2)} : ${F(1,2)} = ?`,
+ [3,2,1],
+ 0,
+ `${M(1,1,2)} = ${F(3,2)}. <br>
+ ${F(3,2)} : ${F(1,2)} = ${F(3,2)} · ${F(2,1)} = 3`
+ ),
+ T(
+ `2 : ${M(1,1,3)} = ?`,
+ [F(3,2),F(2,3),F(4,3)],
+ 0,
+ `${M(1,1,3)} = ${F(4,3)}. <br>
+ 2 : ${F(4,3)} = 2 · ${F(3,4)} = ${F(6,4)} = ${F(3,2)}`
+ )
  ]
 },
+
 {
- name:"🟪 Дріб від числа",
- rule:"Щоб знайти дріб від числа, потрібно число помножити на цей дріб.",
+ name:"🟪 Знаходження дробу від числа",
+ rule:"Щоб знайти дріб від числа, потрібно дане число помножити на цей дріб.",
+ hint:"Запам'ятай: число · заданий дріб.",
  tasks:[
-  {q:`Знайди ${f(2,3)} від 12.`,
-   a:[8,6,9],
-   correct:0,
-   explanation:`12 · ${f(2,3)} = ${f(24,3)} = 8.`},
-  {q:`Знайди ${f(3,4)} від 20.`,
-   a:[15,12,16],
-   correct:0,
-   explanation:`20 · ${f(3,4)} = ${f(60,4)} = 15.`}
+ T(
+ `Знайди ${F(2,3)} від 12.`,
+ [8,6,9],
+ 0,
+ `12 · ${F(2,3)} = ${F(24,3)} = 8`
+ ),
+ T(
+ `Знайди ${F(3,4)} від 20.`,
+ [15,12,16],
+ 0,
+ `20 · ${F(3,4)} = ${F(60,4)} = 15`
+ )
  ]
 },
+
 {
- name:"🟥 Число за його дробом",
+ name:"🟥 Знаходження числа за дробом",
  rule:"Щоб знайти число за значенням його дробу, потрібно дане значення поділити на цей дріб.",
+ hint:"Запам'ятай: значення дробу : заданий дріб.",
  tasks:[
-  {q:`Знайди число, якщо ${f(2,3)} його дорівнює 8.`,
-   a:[12,10,16],
-   correct:0,
-   explanation:`8 : ${f(2,3)} = 8 · ${f(3,2)} = 12.`},
-  {q:`Знайди число, якщо ${f(3,5)} його дорівнює 12.`,
-   a:[20,15,18],
-   correct:0,
-   explanation:`12 : ${f(3,5)} = 12 · ${f(5,3)} = 20.`}
+ T(
+ `Знайди число, якщо ${F(2,3)} його дорівнює 8.`,
+ [12,10,16],
+ 0,
+ `8 : ${F(2,3)} = 8 · ${F(3,2)} = 12`
+ ),
+ T(
+ `Знайди число, якщо ${F(3,5)} його дорівнює 12.`,
+ [20,15,18],
+ 0,
+ `12 : ${F(3,5)} = 12 · ${F(5,3)} = 20`
+ )
  ]
 }
+
 ];
 
-let stationIndex = 0;
-let taskIndex = 0;
-let score = 0;
-let answered = false;
-let completed = [];
+let station=0;
+let task=0;
+let score=0;
+let completed=[];
+let locked=false;
 
 function renderStations() {
- const el = document.getElementById("stations");
- el.innerHTML = "";
+ const el=document.getElementById("stations");
+ el.innerHTML="";
 
- stations.forEach((s,i)=>{
-  const b = document.createElement("button");
-  b.className = "station";
-  if(i===stationIndex) b.classList.add("active");
-  if(completed.includes(i)) b.classList.add("completed");
-  b.textContent = s.name;
-  b.onclick = ()=> {
-   stationIndex=i;
-   taskIndex=0;
-   renderStations();
-   renderGame();
+ data.forEach((s,i)=>{
+  const b=document.createElement("button");
+  b.className="station";
+  if(i===station)b.classList.add("active");
+  if(completed.includes(i))b.classList.add("done");
+  b.textContent=s.name;
+  b.onclick=()=>{
+   station=i;
+   task=0;
+   render();
   };
   el.appendChild(b);
  });
 }
 
-function renderGame() {
- const s = stations[stationIndex];
- const t = s.tasks[taskIndex];
+function render() {
+ const s=data[station];
+ const t=s.tasks[task];
 
- document.getElementById("stationTitle").textContent =
-   s.name;
+ document.getElementById("title").textContent=s.name;
+ document.getElementById("ruleText").textContent=s.rule;
+ document.getElementById("hint").textContent="💡 "+s.hint;
 
- document.getElementById("ruleText").textContent =
-   s.rule;
+ document.getElementById("number").textContent=
+ `ЗАВДАННЯ ${task+1} / ${s.tasks.length}`;
 
- document.getElementById("taskNumber").textContent =
-   `Завдання ${taskIndex+1} із ${s.tasks.length}`;
+ document.getElementById("question").innerHTML=t.q;
 
- document.getElementById("question").innerHTML = t.q;
+ const el=document.getElementById("answers");
+ el.innerHTML="";
 
- const answers = document.getElementById("answers");
- answers.innerHTML = "";
-
- t.a.forEach((a,i)=>{
-  const b = document.createElement("button");
-  b.className = "answer";
-  b.innerHTML = a;
-  b.onclick = ()=>checkAnswer(i,b);
-  answers.appendChild(b);
+ t.answers.forEach((a,i)=>{
+  const b=document.createElement("button");
+  b.className="answer";
+  b.innerHTML=a;
+  b.onclick=()=>check(i);
+  el.appendChild(b);
  });
 
- const fb = document.getElementById("feedback");
+ const fb=document.getElementById("feedback");
  fb.style.display="none";
  fb.className="feedback";
  fb.innerHTML="";
 
- document.getElementById("nextBtn").hidden=true;
- answered=false;
+ document.getElementById("next").hidden=true;
 
+ locked=false;
+ renderStations();
  updateScore();
 }
 
-function checkAnswer(index,button) {
- if(answered) return;
- answered=true;
+function check(i) {
+ if(locked)return;
+ locked=true;
 
- const t = stations[stationIndex].tasks[taskIndex];
- const fb = document.getElementById("feedback");
- const buttons = document.querySelectorAll(".answer");
+ const t=data[station].tasks[task];
+ const fb=document.getElementById("feedback");
+ const buttons=document.querySelectorAll(".answer");
 
  buttons.forEach(b=>b.disabled=true);
 
  fb.style.display="block";
 
- if(index===t.correct) {
+ if(i===t.right) {
   score++;
   fb.className="feedback correct";
-  fb.innerHTML="✅ Правильно! Чудова робота!<br><br>📖 Пояснення:<br>"+t.explanation;
+  fb.innerHTML=
+  "✅ ПРАВИЛЬНО! Ти здобув математичний блок!<br><br>"+
+  "📗 РОЗВ'ЯЗАННЯ:<br>"+t.explanation;
  } else {
   fb.className="feedback wrong";
-  fb.innerHTML="❌ Спробуй ще раз у наступному завданні.<br><br>Правильна відповідь: "+t.a[t.correct]+"<br><br>📖 Пояснення:<br>"+t.explanation;
+  fb.innerHTML=
+  "❌ Цього разу відповідь неправильна.<br><br>"+
+  "Правильна відповідь: "+t.answers[t.right]+
+  "<br><br>📗 РОЗВ'ЯЗАННЯ:<br>"+t.explanation;
  }
 
+ document.getElementById("next").hidden=false;
  updateScore();
- document.getElementById("nextBtn").hidden=false;
 }
 
-function nextQuestion() {
- const s=stations[stationIndex];
-
- if(taskIndex < s.tasks.length-1) {
-  taskIndex++;
+function nextTask() {
+ if(task<data[station].tasks.length-1) {
+  task++;
  } else {
-  if(!completed.includes(stationIndex))
-   completed.push(stationIndex);
+  if(!completed.includes(station))completed.push(station);
 
-  if(stationIndex < stations.length-1) {
-   stationIndex++;
-   taskIndex=0;
-  } else {
-   showFinish();
+  if(completed.length===data.length) {
+   finish();
    return;
   }
+
+  station=(station+1)%data.length;
+  task=0;
  }
 
- renderStations();
- renderGame();
+ render();
 }
 
 function updateScore() {
  document.getElementById("score").textContent=
-  `⭐ Правильні відповіді: ${score}`;
+ "⭐ Правильних відповідей: "+score;
 
- document.getElementById("progressBar").style.width=
-  (completed.length/stations.length*100)+"%";
+ document.getElementById("bar").style.width=
+ (completed.length/data.length*100)+"%";
 }
 
-function showFinish() {
+function finish() {
  document.getElementById("game").innerHTML=`
-  <h2>🏆 Вітаємо! Пригоду завершено!</h2>
-  <p>Ти пройшов усі математичні станції Minecraft!</p>
-  <h2>⭐ Твій результат: ${score}</h2>
-  <p>Продовжуй тренуватися та відкривати нові математичні світи!</p>
-  <button class="next" onclick="location.reload()">
-   🔄 Грати ще раз
-  </button>
- `;
+ <h2>🏆 ВІТАЄМО, МАТЕМАТИЧНИЙ ГЕРОЮ!</h2>
+ <p>Ти пройшов усі шість станцій Minecraft!</p>
+ <h2>⭐ Твій результат: ${score}</h2>
+ <p>Тепер світ звичайних дробів тобі під силу!</p>
+ <button class="next" onclick="location.reload()">
+ ГРАТИ ЩЕ РАЗ 🔄
+ </button>`;
 }
 
-renderStations();
-renderGame();
-
+render();
 </script>
 </body>
 </html>
