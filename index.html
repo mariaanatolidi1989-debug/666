@@ -3,388 +3,429 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Minecraft — Світ дробів</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft: Математична пригода</title>
 <style>
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 body {
   margin: 0;
-  min-height: 100vh;
-  padding: 15px;
   font-family: "Trebuchet MS", Arial, sans-serif;
-  color: white;
+  color: #fff;
+  background: #172b20;
+}
+header {
   text-align: center;
-  background:
-    linear-gradient(180deg,
-      #39c5ff 0%,
-      #8be6ff 28%,
-      #70d64b 28%,
-      #36a832 53%,
-      #9b6539 53%,
-      #633b25 100%);
-  background-attachment: fixed;
+  padding: 18px 10px;
+  background: #315d32;
+  border-bottom: 6px solid #203f25;
 }
-
-.container {
-  max-width: 900px;
-  margin: auto;
-}
-
-h1 {
-  color: #fff600;
-  font-size: clamp(27px, 6vw, 48px);
-  text-shadow:
-    4px 4px #713b15,
-    7px 7px #252525;
-  letter-spacing: 2px;
-}
-
-h2 {
-  color: #ffeb3b;
-  text-shadow: 2px 3px #633b25;
-}
-
-.panel {
-  background: linear-gradient(145deg, #5941a8, #31246f);
-  border: 5px solid #ffca28;
-  border-radius: 18px;
-  box-shadow:
-    0 8px 0 #251c50,
-    0 12px 25px #172b4980;
-  padding: 22px;
-  margin: 20px auto;
-}
-
+h1 { margin: 0 0 8px; font-size: clamp(22px, 4vw, 36px); }
+header p { margin: 0; color: #e2f6d9; }
 .stats {
   display: flex;
-  justify-content: space-around;
-  gap: 10px;
+  justify-content: center;
+  gap: 25px;
   flex-wrap: wrap;
-}
-
-.stat {
-  background: linear-gradient(135deg, #ff9d00, #ff5b16);
-  padding: 13px 18px;
-  border: 3px solid #ffe45c;
-  border-radius: 12px;
-  box-shadow: 0 4px #873d12;
+  padding: 12px;
+  background: #263d2b;
   font-size: 17px;
 }
-
-.blocks {
-  font-size: 42px;
-  margin: 20px;
-  filter: drop-shadow(3px 5px 2px #333);
+.game {
+  max-width: 1100px;
+  margin: 18px auto;
+  padding: 0 12px;
 }
-
-button {
-  background: linear-gradient(180deg, #9cff39, #36b92d);
-  color: #153c13;
-  font-weight: 900;
-  font-size: 18px;
-  padding: 15px 24px;
-  margin: 9px;
-  border: 4px solid #e5ff78;
-  border-radius: 12px;
-  box-shadow: 0 6px #176b20;
-  cursor: pointer;
-  transition: .2s;
-}
-
-button:hover {
-  transform: translateY(-4px) scale(1.04);
-  background: linear-gradient(180deg, #ffff54, #8bff26);
-}
-
-button:active {
-  transform: translateY(3px);
-  box-shadow: 0 2px #176b20;
-}
-
-input, select {
-  padding: 14px;
-  font-size: 19px;
-  border: 4px solid #ffca28;
-  border-radius: 10px;
-  background: #fffde7;
-  color: #29205e;
-  text-align: center;
-  max-width: 90%;
-}
-
-#question {
-  font-size: 27px;
-  line-height: 1.5;
-  color: #fff;
-  background: #20194f;
-  padding: 20px;
-  border: 3px dashed #ffdf40;
-  border-radius: 14px;
-}
-
-#feedback {
-  font-size: 21px;
-  font-weight: bold;
-  min-height: 40px;
-  margin-top: 15px;
-}
-
-#explanation {
-  color: #fff176;
-  font-size: 17px;
-  margin: 12px;
-}
-
-.progress {
-  height: 23px;
-  background: #20194f;
-  border: 3px solid #ffdc35;
-  border-radius: 15px;
+.map {
+  position: relative;
+  width: 100%;
+  height: 570px;
   overflow: hidden;
-  margin: 15px 0;
+  border: 8px solid #5a3921;
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, transparent 48%, #ffffff0c 49%, transparent 50%),
+    repeating-linear-gradient(0deg, #6eaa45 0 48px, #78b84d 48px 96px);
+  box-shadow: 0 8px 0 #382519;
 }
-
-#bar {
-  height: 100%;
-  background: linear-gradient(90deg, #00e5ff, #76ff03, #ffeb3b);
-  transition: width .4s;
+.map::before {
+  content: "🌲       🌳           🌲       🌳";
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  font-size: 35px;
+  letter-spacing: 25px;
 }
-
-.hidden {
-  display: none !important;
+.map::after {
+  content: "🌳         🌲        🌳          🌲";
+  position: absolute;
+  bottom: 4%;
+  left: 3%;
+  font-size: 35px;
+  letter-spacing: 20px;
 }
-
-#finish {
-  background: linear-gradient(135deg, #ff8a00, #e91e63, #673ab7);
-  border-color: #fff176;
+.water {
+  position: absolute;
+  width: 25%;
+  height: 19%;
+  right: 3%;
+  top: 7%;
+  background: repeating-linear-gradient(0deg,#238bc4 0 18px,#37a9d9 18px 36px);
+  border: 6px solid #2873a0;
+  border-radius: 8px;
 }
-
-#finish h2 {
-  font-size: 30px;
+.road {
+  position: absolute;
+  width: 78%;
+  height: 13px;
+  left: 10%;
+  top: 51%;
+  background: #b58a55;
+  border: 3px solid #80603b;
+  transform: rotate(-12deg);
+  border-radius: 8px;
 }
-
-.small {
-  color: #fff3a0;
+.station {
+  position: absolute;
+  z-index: 2;
+  width: 112px;
+  text-align: center;
+  transform: translate(-50%,-50%);
 }
-
+.station .building {
+  width: 66px;
+  height: 66px;
+  margin: auto;
+  display: grid;
+  place-items: center;
+  font-size: 37px;
+  border: 5px solid #49351f;
+  border-radius: 8px;
+  background: #d6a04e;
+  box-shadow: 0 5px 0 #79502a;
+}
+.station .name {
+  margin-top: 8px;
+  padding: 5px 3px;
+  border-radius: 6px;
+  background: #263b24;
+  border: 2px solid #d4b46d;
+  font-weight: bold;
+  font-size: 12px;
+}
+.station.done .building {
+  background: #42bd55;
+  border-color: #eaffc9;
+}
+.station.current .building {
+  animation: pulse 1s infinite alternate;
+  background: #ffd54f;
+}
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.13); }
+}
+#hero {
+  position: absolute;
+  z-index: 5;
+  left: 12%;
+  top: 75%;
+  transform: translate(-50%,-50%);
+  font-size: 48px;
+  transition: left 1.3s ease, top 1.3s ease;
+  filter: drop-shadow(3px 4px 1px #333);
+}
+#hero.walking { animation: bounce .25s infinite alternate; }
+@keyframes bounce {
+  from { margin-top: 0; }
+  to { margin-top: -9px; }
+}
+.panel {
+  margin: 20px auto;
+  max-width: 760px;
+  padding: 22px;
+  text-align: center;
+  background: #2d4930;
+  border: 5px solid #a77b43;
+  border-radius: 12px;
+  box-shadow: 0 6px 0 #172b20;
+}
+.panel h2 { margin-top: 0; color: #ffe082; }
+.question { font-size: 21px; font-weight: bold; margin: 18px 0; }
+.answers {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 12px;
+}
+button {
+  cursor: pointer;
+  border: 3px solid #54391f;
+  border-radius: 8px;
+  padding: 13px;
+  font-size: 17px;
+  font-weight: bold;
+  color: #fff;
+  background: #a86b35;
+  box-shadow: 0 4px 0 #63401f;
+}
+button:hover { filter: brightness(1.15); }
+button:active { transform: translateY(3px); box-shadow: none; }
+button:disabled { opacity: .55; cursor: default; }
+#message { min-height: 34px; margin-top: 17px; font-size: 18px; }
+#nextBtn, #startBtn {
+  background: #398c42;
+  border-color: #1d5127;
+  margin-top: 12px;
+}
+#startBtn { font-size: 20px; padding: 15px 25px; }
+.hidden { display: none; }
+footer { text-align: center; padding: 15px; color: #d9e8d2; }
 @media(max-width:600px) {
-  .panel {padding: 14px}
-  #question {font-size: 21px}
-  .stat {font-size: 14px}
-  button {font-size: 16px}
+  .map { height: 490px; }
+  .station { width: 83px; }
+  .station .building { width: 52px; height: 52px; font-size: 29px; }
+  .station .name { font-size: 10px; }
+  #hero { font-size: 39px; }
+  .answers { grid-template-columns: 1fr; }
+  .question { font-size: 18px; }
 }
 </style>
 </head>
 <body>
-<div class="container">
-<h1>⛏️ MINECRAFT: СВІТ ДРОБІВ</h1>
-<div class="blocks">🟩 🟫 💎 🟩 🧱</div>
 
-<div class="panel">
- <div class="stats">
-  <div class="stat">💎 Бали: <b id="score">0</b></div>
-  <div class="stat">❤️ Життя: <b id="lives">5</b></div>
-  <div class="stat">🌍 Рівень: <b id="level">1</b>/5</div>
- </div>
- <div class="progress"><div id="bar"></div></div>
- <p id="progress">Почни математичну пригоду!</p>
+<header>
+  <h1>⛏️ MINECRAFT: МАТЕМАТИЧНА ПРИГОДА</h1>
+  <p>Вирушай у подорож! Розв'язуй завдання та відкривай нові світи!</p>
+</header>
+
+<div class="stats">
+  <span>⭐ Бали: <b id="score">0</b></span>
+  <span>🏆 Станції: <b id="progress">0/5</b></span>
+  <span>❤️ Спроби: <b id="lives">❤️❤️❤️</b></span>
 </div>
 
-<div class="panel" id="start">
- <h2>🌍 Ласкаво просимо, Майстре дробів!</h2>
- <p>Пройди п'ять світів, розв'язуй приклади та збирай діаманти!</p>
- <p>Обери складність:</p>
- <select id="difficulty">
-  <option value="1">🟢 Легка</option>
-  <option value="2">🟡 Середня</option>
-  <option value="3">🔴 Складна</option>
- </select>
- <br>
- <button onclick="startGame()">ПОЧАТИ ГРУ ▶</button>
-</div>
+<main class="game">
+  <div class="map">
+    <div class="water"></div>
+    <div class="road"></div>
 
-<div class="panel hidden" id="game">
- <h2 id="levelName"></h2>
- <div class="blocks" id="scene"></div>
- <p id="question"></p>
- <input id="answer" placeholder="Наприклад: 3/4">
- <br>
- <button id="check" onclick="checkAnswer()">ПЕРЕВІРИТИ ✔</button>
- <div id="feedback"></div>
- <div id="explanation"></div>
- <button id="next" class="hidden" onclick="nextTask()">ДАЛІ ➜</button>
- <p>Відповідь: 3/4, 2 або 1 1/2</p>
-</div>
+    <div class="station current" id="s0" style="left:12%;top:75%">
+      <div class="building">🏠</div>
+      <div class="name">СТАРТ</div>
+    </div>
+    <div class="station" id="s1" style="left:31%;top:58%">
+      <div class="building">🧱</div>
+      <div class="name">МНОЖЕННЯ</div>
+    </div>
+    <div class="station" id="s2" style="left:49%;top:37%">
+      <div class="building">⚒️</div>
+      <div class="name">ДІЛЕННЯ</div>
+    </div>
+    <div class="station" id="s3" style="left:68%;top:57%">
+      <div class="building">💎</div>
+      <div class="name">МІШАНІ ЧИСЛА</div>
+    </div>
+    <div class="station" id="s4" style="left:85%;top:34%">
+      <div class="building">🧪</div>
+      <div class="name">ДРІБ ВІД ЧИСЛА</div>
+    </div>
+    <div class="station" id="s5" style="left:87%;top:78%">
+      <div class="building">🏆</div>
+      <div class="name">ФІНІШ</div>
+    </div>
 
-<div class="panel hidden" id="finish">
- <h2>🏆 ПРИГОДУ ЗАВЕРШЕНО!</h2>
- <div class="blocks">🏆 💎 🏆</div>
- <h2 id="result"></h2>
- <p id="resultText"></p>
- <button onclick="location.reload()">ГРАТИ ЩЕ РАЗ ↻</button>
- <button onclick="certificate()">ОТРИМАТИ СЕРТИФІКАТ</button>
-</div>
-</div>
+    <div id="hero">🧍</div>
+  </div>
+
+  <section class="panel" id="intro">
+    <h2>🌍 Твоя пригода починається!</h2>
+    <p>Ти — відважний дослідник світу Minecraft. Щоб дістатися скарбниці, потрібно пройти 5 математичних станцій.</p>
+    <p>За кожну правильну відповідь отримуєш ⭐ 10 балів.</p>
+    <button id="startBtn" onclick="startGame()">▶ РОЗПОЧАТИ ПРИГОДУ</button>
+  </section>
+
+  <section class="panel hidden" id="quiz">
+    <h2 id="stationTitle">Станція 1</h2>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div id="message"></div>
+    <button id="nextBtn" class="hidden" onclick="nextQuestion()">Продовжити подорож ➜</button>
+  </section>
+
+  <section class="panel hidden" id="finish">
+    <h2>🏆 ВІТАЄМО! ТИ ПЕРЕМІГ!</h2>
+    <div style="font-size:65px">🎁💎🪙</div>
+    <p>Ти пройшов усі математичні станції та відкрив скарбницю знань!</p>
+    <h2>Твій результат: <span id="finalScore">0</span> балів ⭐</h2>
+    <p id="rating"></p>
+    <button onclick="location.reload()">🔄 ЗІГРАТИ ЩЕ РАЗ</button>
+  </section>
+</main>
+
+<footer>⛏️ Minecraft: Математика — твоя суперсила! ⛏️</footer>
 
 <script>
-const worlds=[
- ["Множення звичайних дробів","🌳 🧱 💎 🌳"],
- ["Ділення звичайних дробів","🪨 💎 🧱 🪨"],
- ["Мішані числа","🏠 🧱 💎 🏠"],
- ["Знаходження дробу від числа","🌾 🪵 💎 🌾"],
- ["Знаходження числа за дробом","🏰 💎 🏆 🏰"]
+const stations = [
+  {
+    name: "🧱 Станція 1. Множення дробів",
+    questions: [
+      {q:"Обчисли: 2/3 · 3/4",a:["1/2","5/7","6/7","2/4"],c:0,h:"2·3 / 3·4 = 6/12 = 1/2"},
+      {q:"Обчисли: 3/5 · 2/3",a:["6/8","2/5","5/8","1/5"],c:1,h:"3·2 / 5·3 = 6/15 = 2/5"},
+      {q:"Знайди добуток: 4/7 · 7/8",a:["1/2","4/7","7/8","2/3"],c:0,h:"28/56 = 1/2"}
+    ]
+  },
+  {
+    name: "⚒️ Станція 2. Ділення дробів",
+    questions: [
+      {q:"Обчисли: 2/3 : 4/5",a:["8/15","5/6","6/5","2/5"],c:1,h:"2/3 · 5/4 = 10/12 = 5/6"},
+      {q:"Обчисли: 3/4 : 1/2",a:["3/8","2/3","3/2","1/4"],c:2,h:"3/4 · 2/1 = 6/4 = 3/2"},
+      {q:"Обчисли: 5/6 : 5/12",a:["2","1/2","5/12","12/30"],c:0,h:"5/6 · 12/5 = 2"}
+    ]
+  },
+  {
+    name: "💎 Станція 3. Мішані числа",
+    questions: [
+      {q:"Обчисли: 1 1/2 · 2",a:["2","3","2 1/2","3 1/2"],c:1,h:"1 1/2 = 3/2; 3/2 · 2 = 3"},
+      {q:"Обчисли: 2 1/3 : 1 1/6",a:["2","1/2","3","1"],c:0,h:"7/3 : 7/6 = 7/3 · 6/7 = 2"},
+      {q:"Обчисли: 1 1/4 · 2/5",a:["1/2","2/5","5/8","3/4"],c:0,h:"5/4 · 2/5 = 10/20 = 1/2"}
+    ]
+  },
+  {
+    name: "🧪 Станція 4. Знаходження дробу від числа",
+    questions: [
+      {q:"Знайди 1/3 від 24.",a:["6","8","12","18"],c:1,h:"24 : 3 = 8"},
+      {q:"Знайди 3/4 від 20.",a:["12","10","15","16"],c:2,h:"20 : 4 · 3 = 15"},
+      {q:"Знайди 2/5 від 35.",a:["12","14","15","10"],c:1,h:"35 : 5 · 2 = 14"}
+    ]
+  },
+  {
+    name: "🏆 Станція 5. Знаходження числа за його дробом",
+    questions: [
+      {q:"1/4 числа дорівнює 6. Знайди число.",a:["10","18","24","30"],c:2,h:"6 · 4 = 24"},
+      {q:"2/3 числа дорівнює 10. Знайди число.",a:["12","15","18","20"],c:1,h:"10 : 2 · 3 = 15"},
+      {q:"3/5 числа дорівнює 12. Знайди число.",a:["15","18","20","25"],c:2,h:"12 : 3 · 5 = 20"}
+    ]
+  }
 ];
 
-let score=0,lives=5,level=0,task=0;
-let current=null,answered=false,difficulty=1;
-const $=id=>document.getElementById(id);
+let stationIndex = 0;
+let questionIndex = 0;
+let score = 0;
+let lives = 3;
+let locked = false;
 
-function gcd(a,b){return b===0?Math.abs(a):gcd(b,a%b)}
-function R(n,d=1){
- if(d<0){n=-n;d=-d}
- let g=gcd(n,d);
- return {n:n/g,d:d/g};
+const $ = id => document.getElementById(id);
+
+function updateStats() {
+  $("score").textContent = score;
+  $("progress").textContent = stationIndex + "/5";
+  $("lives").textContent = "❤️".repeat(lives) + "🖤".repeat(3-lives);
 }
-function mul(a,b){return R(a.n*b.n,a.d*b.d)}
-function div(a,b){return R(a.n*b.d,a.d*b.n)}
-function show(a){return a.d===1?""+a.n:a.n+"/"+a.d}
-function mixed(a){
- let w=Math.floor(a.n/a.d),r=a.n%a.d;
- if(!r)return ""+w;
- return w===0?show(a):w+" "+r+"/"+a.d;
+
+function startGame() {
+  $("intro").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  moveHero(1);
+  showQuestion();
 }
-function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function make(){
- let a,b;
- let max=difficulty===1?4:difficulty===2?8:12;
- let den=difficulty===1?5:difficulty===2?9:14;
- let type=level;
- if(type===0||type===1||type===2){
-  a=R(rand(1,max),rand(2,den));
-  b=R(rand(1,max),rand(2,den));
-  if(type===2){
-   a=R(rand(3,12),rand(2,5));
-   b=R(rand(3,12),rand(2,5));
+
+function moveHero(stationNumber) {
+  const positions = [
+    [12,75],[31,58],[49,37],[68,57],[85,34],[87,78]
+  ];
+  const pos = positions[stationNumber];
+  const hero = $("hero");
+  hero.classList.add("walking");
+  hero.style.left = pos[0] + "%";
+  hero.style.top = pos[1] + "%";
+  setTimeout(() => hero.classList.remove("walking"), 1400);
+}
+
+function showQuestion() {
+  locked = false;
+  const station = stations[stationIndex];
+  const item = station.questions[questionIndex];
+  $("stationTitle").textContent = station.name;
+  $("question").textContent = item.q;
+  $("message").textContent = "";
+  $("nextBtn").classList.add("hidden");
+  $("answers").innerHTML = "";
+
+  item.a.forEach((answer,index) => {
+    const btn = document.createElement("button");
+    btn.textContent = answer;
+    btn.onclick = () => checkAnswer(index,btn);
+    $("answers").appendChild(btn);
+  });
+}
+
+function checkAnswer(index,button) {
+  if (locked) return;
+  locked = true;
+  const item = stations[stationIndex].questions[questionIndex];
+  const buttons = $("answers").querySelectorAll("button");
+  buttons.forEach(b => b.disabled = true);
+
+  if (index === item.c) {
+    score += 10;
+    button.style.background = "#258b42";
+    $("message").innerHTML = "✅ Правильно! +10 балів ⭐";
+  } else {
+    lives--;
+    button.style.background = "#a83232";
+    buttons[item.c].style.background = "#258b42";
+    $("message").innerHTML = "❌ Спробуй запам'ятати: " + item.h;
   }
-  if(type===0)return {q:show(a)+" × "+show(b)+" = ?",ans:mul(a,b),
-   explain:"Множимо чисельник на чисельник, знаменник на знаменник."};
-  if(type===1)return {q:show(a)+" : "+show(b)+" = ?",ans:div(a,b),
-   explain:"Ділення замінюємо множенням на обернений дріб."};
-  return Math.random()<.5?
-   {q:mixed(a)+" × "+mixed(b)+" = ?",ans:mul(a,b),
-    explain:"Перетвори мішані числа на неправильні дроби та перемнож."}:
-   {q:mixed(a)+" : "+mixed(b)+" = ?",ans:div(a,b),
-    explain:"Перетвори мішані числа на неправильні дроби та поділи."};
- }
- let d=rand(2,den),n=rand(1,d-1),k=rand(2,max*2);
- if(type===3){
-  return {q:"Знайди "+n+"/"+d+" від числа "+(d*k)+".",
-   ans:R(n*k),explain:"Поділи число на знаменник і помнож на чисельник."};
- }
- return {q:n+"/"+d+" числа дорівнює "+(n*k)+". Знайди число.",
-  ans:R(d*k),explain:"Значення дробу поділи на чисельник і помнож на знаменник."};
+
+  updateStats();
+  $("nextBtn").classList.remove("hidden");
+  if (lives <= 0) {
+    $("nextBtn").textContent = "Завершити гру";
+  }
 }
-function parse(s){
- s=s.trim().replace(/\s/g,"");
- let p=s.split("/");
- if(p.length===1){
-  let n=Number(p[0]);
-  return Number.isInteger(n)?R(n):null;
- }
- if(p.length!==2)return null;
- let n=Number(p[0]),d=Number(p[1]);
- if(!Number.isInteger(n)||!Number.isInteger(d)||d===0)return null;
- return R(n,d);
+
+function nextQuestion() {
+  if (lives <= 0) {
+    endGame(false);
+    return;
+  }
+
+  questionIndex++;
+
+  if (questionIndex < stations[stationIndex].questions.length) {
+    showQuestion();
+    return;
+  }
+
+  $("s" + (stationIndex+1)).classList.add("done");
+
+  stationIndex++;
+  questionIndex = 0;
+  updateStats();
+
+  if (stationIndex >= stations.length) {
+    moveHero(5);
+    setTimeout(() => endGame(true), 1500);
+    return;
+  }
+
+  $("s" + stationIndex).classList.add("current");
+  moveHero(stationIndex+1);
+  $("message").textContent = "🎉 Станцію пройдено! Рушаємо далі!";
+  $("nextBtn").textContent = "Перейти до наступної станції ➜";
+  $("nextBtn").onclick = () => {
+    $("nextBtn").onclick = nextQuestion;
+    showQuestion();
+  };
 }
-function startGame(){
- difficulty=Number($("difficulty").value);
- $("start").classList.add("hidden");
- $("game").classList.remove("hidden");
- load();
+
+function endGame(won) {
+  $("quiz").classList.add("hidden");
+  $("finish").classList.remove("hidden");
+  $("finalScore").textContent = score;
+  $("rating").textContent = won
+    ? "Ти справжній майстер математики! 🏅"
+    : "Пригоду завершено. Повтори правила та спробуй ще раз! 💪";
 }
-function load(){
- current=make();answered=false;
- $("levelName").textContent=worlds[level][0];
- $("scene").textContent=worlds[level][1];
- $("question").textContent=current.q;
- $("answer").value="";
- $("answer").disabled=false;
- $("feedback").textContent="";
- $("explanation").textContent="";
- $("check").classList.remove("hidden");
- $("next").classList.add("hidden");
- update();
- $("answer").focus();
-}
-function checkAnswer(){
- if(answered)return;
- let a=parse($("answer").value);
- if(!a){
-  $("feedback").textContent="⚠️ Введи відповідь у форматі 3/4 або 2.";
-  return;
- }
- answered=true;
- let correct=a.n===current.ans.n&&a.d===current.ans.d;
- if(correct){
-  score+=10*difficulty;
-  $("feedback").textContent="✅ Правильно! +"+(10*difficulty)+" діамантів!";
-  $("feedback").style.color="#9cff70";
- }else{
-  lives--;
-  $("feedback").textContent="❌ Правильна відповідь: "+show(current.ans);
-  $("feedback").style.color="#ffaaaa";
- }
- $("explanation").textContent="💡 "+current.explain;
- $("answer").disabled=true;
- $("check").classList.add("hidden");
- $("next").classList.remove("hidden");
- update();
-}
-function nextTask(){
- if(lives<=0){finish();return}
- task++;
- if(task>=5){
-  level++;task=0;
-  if(level>=5){finish();return}
- }
- load();
-}
-function update(){
- $("score").textContent=score;
- $("lives").textContent=lives;
- $("level").textContent=Math.min(level+1,5);
- let done=level*5+task;
- $("bar").style.width=(done/25*100)+"%";
- $("progress").textContent="Виконано завдань: "+done+" із 25";
-}
-function finish(){
- $("game").classList.add("hidden");
- $("finish").classList.remove("hidden");
- $("result").textContent="Твій результат: "+score+" 💎";
- $("resultText").textContent=lives>0?
- "Вітаємо! Ти став Майстром дробів!":
- "Спробуй ще раз! Ти зможеш пройти всі світи!";
-}
-function certificate(){
- let name=prompt("Введи своє ім'я для сертифіката:");
- if(!name)return;
- let w=window.open("","_blank");
- w.document.write(`<html><body style="text-align:center;font-family:Arial;padding:50px;border:12px solid #568c37">
- <h1>🏆 СЕРТИФІКАТ 🏆</h1><h2>МАЙСТЕР ДРОБІВ</h2>
- <h2>${name.replace(/[<>&"]/g,"")}</h2>
- <p>Успішно пройшов математичну пригоду</p>
- <h2>MINECRAFT: СВІТ ДРОБІВ</h2>
- <h3>Результат: ${score} діамантів 💎</h3>
- <p>6 клас НУШ</p><p>Дата: ${new Date().toLocaleDateString("uk-UA")}</p>
- <button onclick="print()">Друкувати сертифікат</button>
- </body></html>`);
-}
-$("answer").addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!answered)checkAnswer();
-});
 </script>
 </body>
 </html>
