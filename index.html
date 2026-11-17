@@ -3,265 +3,564 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Minecraft: Математична пригода</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft — Математична пригода</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#243524;color:white;font-family:Arial,sans-serif}
+body{
+ margin:0;background:#17291d;color:white;
+ font-family:Verdana,Arial,sans-serif;
+}
 header{text-align:center;padding:12px}
-h1{color:#ffe477;margin:5px}
-main{max-width:1000px;margin:auto;padding:10px}
-.hud{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.hud span{background:#426b35;padding:9px;border:2px solid #91b45b;border-radius:6px}
-canvas{display:block;width:100%;height:auto;border:5px solid #754b28;background:#8bd0ed}
-#hint{text-align:center;background:#304b2b;padding:10px}
-.controls{display:flex;justify-content:center;gap:10px;padding:12px;flex-wrap:wrap}
-button{padding:11px 16px;border:0;border-radius:6px;font-weight:bold;cursor:pointer}
-.move{background:#d8e9b8;color:#243524}
-.action{background:#f4c84d;color:#38290d}
-button:disabled{opacity:.4}
-#task{display:none;background:#f5edcf;color:#243524;padding:16px;border:4px solid #987044;border-radius:8px;margin-top:12px}
-#task h2{color:#38612d}
-.rule{background:#fff8dc;padding:12px;border-left:6px solid #e0ad32}
+h1{margin:4px;color:#ffe477;text-shadow:3px 3px #49351f}
+header p{margin:6px;font-size:14px}
+main{max-width:1100px;margin:auto;padding:10px}
+.hud{
+ display:flex;justify-content:space-between;
+ flex-wrap:wrap;gap:8px;margin-bottom:10px
+}
+.hud span{
+ background:#345b31;padding:9px 13px;
+ border:2px solid #8cad56;border-radius:6px
+}
+#mapbox{
+ border:6px solid #694326;border-radius:8px;
+ overflow:hidden;background:#86c9e8;
+ box-shadow:0 8px 25px #0008
+}
+canvas{
+ display:block;width:100%;height:auto;
+ image-rendering:pixelated
+}
+#hint{
+ text-align:center;background:#29462a;
+ padding:10px;font-size:14px
+}
+.controls{
+ display:flex;justify-content:center;
+ flex-wrap:wrap;gap:10px;padding:12px
+}
+button{
+ border:0;border-radius:7px;padding:12px 17px;
+ font-size:15px;font-weight:bold;cursor:pointer
+}
+.move{background:#dcebbd;color:#263c20}
+.action{background:#f5c94d;color:#38290d}
+button:disabled{opacity:.4;cursor:not-allowed}
+#task{
+ display:none;background:#f5edcf;color:#263b24;
+ border:4px solid #87623b;border-radius:9px;
+ padding:16px;margin-top:12px
+}
+#task h2{margin-top:0;color:#3d682f}
+.rule{
+ background:#fff8dd;padding:12px;
+ border-left:6px solid #dcae35;
+ line-height:1.5
+}
 #question{font-size:21px;font-weight:bold;margin:16px 0}
-.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.answer{background:white;border:2px solid #9caf85;color:#263b23}
-.correct{background:#c9edb9!important}
-.wrong{background:#f7c8bc!important}
-#feedback{font-weight:bold;margin:12px 0;min-height:25px}
+.answers{
+ display:grid;grid-template-columns:1fr 1fr;gap:10px
+}
+.answer{
+ background:white;color:#263b24;
+ border:2px solid #a4b58e;text-align:left
+}
+.answer.correct{background:#c8edb9;border-color:#438b37}
+.answer.wrong{background:#f4c4b8;border-color:#b34d3c}
+#feedback{font-weight:bold;min-height:28px;margin:12px 0}
 #next{display:none;background:#477e37;color:white}
 #close{background:#725a42;color:white}
-#finish{display:none;background:#eaf2d7;color:#274122;padding:20px;text-align:center;margin-top:12px}
-.fraction{display:inline-flex;vertical-align:middle;flex-direction:column;align-items:center;line-height:1.05;margin:0 3px}
-.fraction .top{border-bottom:2px solid currentColor;padding:0 5px 2px}
+#finish{
+ display:none;background:#eaf2d7;color:#274122;
+ text-align:center;padding:22px;margin-top:12px;
+ border:4px solid #789b4b;border-radius:9px
+}
+.fraction{
+ display:inline-flex;vertical-align:middle;
+ flex-direction:column;align-items:center;
+ line-height:1.05;margin:0 3px;font-size:.95em
+}
+.fraction .top{
+ border-bottom:2px solid currentColor;
+ padding:0 5px 2px
+}
 .fraction .bottom{padding:2px 5px 0}
-@media(max-width:600px){.answers{grid-template-columns:1fr}}
+@media(max-width:600px){
+ .answers{grid-template-columns:1fr}
+ #question{font-size:18px}
+}
 </style>
 </head>
+
 <body>
 <header>
-<h1>⛏️ Minecraft: Математична пригода</h1>
-<p>Подорожуй світом, виконуй завдання та збирай діаманти!</p>
+<h1>⛏️ MINECRAFT: МАТЕМАТИЧНА ПРИГОДА</h1>
+<p>Досліджуй кубічний світ, відвідуй станції та збирай діаманти!</p>
 </header>
 
 <main>
 <div class="hud">
-<span>💎 Діаманти: <b id="score">0</b></span>
-<span>📍 <b id="status">Початок пригоди</b></span>
+ <span>💎 Діаманти: <b id="score">0</b></span>
+ <span>📍 <b id="stationStatus">Початок пригоди</b></span>
+ <span>🏆 Станції: <b id="progress">0 / 6</b></span>
 </div>
 
-<canvas id="game" width="1000" height="400"></canvas>
-<div id="hint">Рух: ← → або A / D. Біля станції натисни E.</div>
+<div id="mapbox">
+ <canvas id="game" width="1000" height="520"></canvas>
+ <div id="hint">
+   Рухай персонажа клавішами ← → або A / D.
+   Підійди до станції та натисни E.
+ </div>
+</div>
 
 <div class="controls">
-<button class="move" id="left">◀ Ліворуч</button>
-<button class="move" id="right">Праворуч ▶</button>
-<button class="action" id="open" disabled>Відкрити станцію</button>
+ <button class="move" id="left">◀ Ліворуч</button>
+ <button class="move" id="right">Праворуч ▶</button>
+ <button class="action" id="open" disabled>
+   Відкрити станцію
+ </button>
 </div>
 
 <section id="task">
-<h2 id="taskTitle"></h2>
-<div class="rule" id="rule"></div>
-<div id="question"></div>
-<div class="answers" id="answers"></div>
-<div id="feedback"></div>
-<button id="next">Наступне завдання</button>
-<button id="close">Повернутися у світ</button>
+ <h2 id="taskTitle"></h2>
+ <div class="rule" id="rule"></div>
+ <div id="question"></div>
+ <div class="answers" id="answers"></div>
+ <div id="feedback"></div>
+ <button id="next">Наступне завдання</button>
+ <button id="close">Повернутися у світ</button>
 </section>
 
 <section id="finish">
-<h2>🏆 Вітаємо! Пригоду завершено!</h2>
-<p>Ти відвідав усі шість станцій і зібрав <b id="finalScore"></b> діамантів!</p>
-<button class="action" onclick="location.reload()">Грати ще раз</button>
+ <h2>🏆 ПРИГОДУ ЗАВЕРШЕНО!</h2>
+ <p>Ти пройшов усі математичні станції!</p>
+ <h2>💎 Зібрано діамантів: <span id="finalScore">0</span></h2>
+ <button class="action" onclick="location.reload()">Грати ще раз</button>
 </section>
 </main>
 
 <script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-const W=1000, ground=320, world=1800;
+// ======================================
+// МАТЕМАТИЧНІ ДРОБИ
+// ======================================
 
-function f(n,d){
- return `<span class="fraction"><span class="top">${n}</span><span class="bottom">${d}</span></span>`;
+function F(n,d){
+ return `<span class="fraction">
+ <span class="top">${n}</span>
+ <span class="bottom">${d}</span>
+ </span>`;
 }
-function m(w,n,d){return `${w}${f(n,d)}`;}
+function M(w,n,d){return `${w}${F(n,d)}`}
+
+// ======================================
+// ШІСТЬ МАТЕМАТИЧНИХ СТАНЦІЙ
+// ======================================
 
 const stations=[
 {
- name:"Множення звичайних дробів",x:150,color:"#428fca",
- rule:"Перемнож чисельники між собою, а знаменники — між собою. Скороти результат, якщо можна.",
+ name:"Множення звичайних дробів",
+ x:4,color:"#428fca",
+ rule:"Щоб помножити звичайні дроби, перемнож чисельники між собою, а знаменники — між собою. Результат скороти, якщо можна.",
  tasks:[
-  {q:`${f(2,3)} · ${f(3,4)} = ?`,a:[f(1,2),f(2,7),f(5,7),f(3,4)],c:0,e:"2 · 3 = 6, 3 · 4 = 12. 6/12 = 1/2."},
-  {q:`${f(3,5)} · ${f(5,6)} = ?`,a:[f(1,2),f(3,6),f(2,5),f(5,11)],c:0,e:"15/30 = 1/2."}
+  {q:`Обчисли: ${F(2,3)} · ${F(3,4)}`,
+   a:[F(1,2),F(2,7),F(5,7),F(3,4)],c:0,
+   e:"2 · 3 = 6; 3 · 4 = 12. Отримуємо 6/12 = 1/2."},
+  {q:`Обчисли: ${F(3,5)} · ${F(5,6)}`,
+   a:[F(1,2),F(3,6),F(2,5),F(5,11)],c:0,
+   e:"3 · 5 = 15; 5 · 6 = 30. 15/30 = 1/2."},
+  {q:`Обчисли: ${F(4,7)} · ${F(7,8)}`,
+   a:[F(1,2),F(3,4),F(2,7),F(4,8)],c:0,
+   e:"28/56 = 1/2."},
+  {q:`Обчисли: ${F(5,9)} · ${F(3,10)}`,
+   a:[F(1,6),F(2,5),F(3,9),F(5,10)],c:0,
+   e:"15/90 = 1/6."}
  ]
 },
 {
- name:"Множення мішаних чисел",x:440,color:"#9566c4",
- rule:"Перетвори мішані числа на неправильні дроби. Потім перемнож дроби.",
+ name:"Множення мішаних чисел",
+ x:10,color:"#9566c4",
+ rule:"Щоб помножити мішані числа, спочатку перетвори їх на неправильні дроби. Потім перемнож дроби та скороти результат.",
  tasks:[
-  {q:`${m(1,1,2)} · ${m(1,1,3)} = ?`,a:["2",f(3,4),f(2,3),f(5,6)],c:0,e:"3/2 · 4/3 = 12/6 = 2."},
-  {q:`${m(2,1,4)} · ${f(2,5)} = ?`,a:[f(1,2),f(9,10),f(3,5),f(4,5)],c:1,e:"9/4 · 2/5 = 18/20 = 9/10."}
+  {q:`Обчисли: ${M(1,1,2)} · ${M(1,1,3)}`,
+   a:["2",F(3,4),F(2,3),F(5,6)],c:0,
+   e:"1 1/2 = 3/2; 1 1/3 = 4/3. 3/2 · 4/3 = 2."},
+  {q:`Обчисли: ${M(2,1,4)} · ${F(2,5)}`,
+   a:[F(1,2),F(9,10),F(3,5),F(4,5)],c:1,
+   e:"2 1/4 = 9/4. 9/4 · 2/5 = 18/20 = 9/10."},
+  {q:`Обчисли: ${M(1,2,3)} · ${F(3,5)}`,
+   a:["1",F(4,5),F(3,5),F(2,5)],c:0,
+   e:"1 2/3 = 5/3. 5/3 · 3/5 = 1."},
+  {q:`Обчисли: ${M(2,1,2)} · ${M(1,1,5)}`,
+   a:["2",M(3,0,1),"3",M(4,1,2)],c:2,
+   e:"2 1/2 = 5/2; 1 1/5 = 6/5. Добуток дорівнює 3."}
  ]
 },
 {
- name:"Ділення звичайних дробів",x:730,color:"#d28a3e",
- rule:"Перший дріб помнож на дріб, обернений до другого.",
+ name:"Ділення звичайних дробів",
+ x:16,color:"#d28a3e",
+ rule:"Щоб поділити один звичайний дріб на інший, перший дріб помнож на дріб, обернений до другого.",
  tasks:[
-  {q:`${f(2,3)} : ${f(4,5)} = ?`,a:[f(5,6),f(6,5),f(8,15),f(3,5)],c:0,e:"2/3 · 5/4 = 10/12 = 5/6."},
-  {q:`${f(3,4)} : ${f(1,2)} = ?`,a:[f(3,8),f(2,3),f(3,2),f(1,4)],c:2,e:"3/4 · 2/1 = 6/4 = 3/2."}
+  {q:`Обчисли: ${F(2,3)} : ${F(4,5)}`,
+   a:[F(5,6),F(6,5),F(8,15),F(3,5)],c:0,
+   e:"2/3 · 5/4 = 10/12 = 5/6."},
+  {q:`Обчисли: ${F(3,4)} : ${F(1,2)}`,
+   a:[F(3,8),F(2,3),F(3,2),F(1,4)],c:2,
+   e:"3/4 · 2/1 = 6/4 = 3/2."},
+  {q:`Обчисли: ${F(5,6)} : ${F(5,9)}`,
+   a:[F(3,2),F(2,3),F(5,9),F(1,2)],c:0,
+   e:"5/6 · 9/5 = 45/30 = 3/2."},
+  {q:`Обчисли: ${F(7,8)} : ${F(7,12)}`,
+   a:[F(3,2),F(2,3),F(7,12),F(1,2)],c:0,
+   e:"7/8 · 12/7 = 84/56 = 3/2."}
  ]
 },
 {
- name:"Ділення мішаних чисел",x:1020,color:"#bd5961",
- rule:"Перетвори мішані числа на неправильні дроби. Ділення заміни множенням на обернений дріб.",
+ name:"Ділення мішаних чисел",
+ x:22,color:"#bd5961",
+ rule:"Мішані числа перетвори на неправильні дроби. Ділення заміни множенням на обернений дріб.",
  tasks:[
-  {q:`${m(1,1,2)} : ${m(1,1,4)} = ?`,a:[f(6,5),f(5,6),f(3,4),f(4,5)],c:0,e:"3/2 · 4/5 = 12/10 = 6/5."},
-  {q:`2 : ${f(2,3)} = ?`,a:["3",f(3,2),f(2,3),f(4,3)],c:0,e:"2 · 3/2 = 3."}
+  {q:`Обчисли: ${M(1,1,2)} : ${M(1,1,4)}`,
+   a:[F(6,5),F(5,6),F(3,4),F(4,5)],c:0,
+   e:"3/2 · 4/5 = 12/10 = 6/5."},
+  {q:`Обчисли: 2 : ${F(2,3)}`,
+   a:["3",F(3,2),F(2,3),F(4,3)],c:0,
+   e:"2 · 3/2 = 3."},
+  {q:`Обчисли: ${M(2,1,4)} : ${F(3,4)}`,
+   a:["3",F(3,4),F(4,3),"2"],c:0,
+   e:"2 1/4 = 9/4. 9/4 · 4/3 = 3."},
+  {q:`Обчисли: ${M(3,1,3)} : ${M(1,1,9)}`,
+   a:["3",F(5,3),"2","4"],c:0,
+   e:"3 1/3 = 10/3; 1 1/9 = 10/9. Частка дорівнює 3."}
  ]
 },
 {
- name:"Знаходження дробу від числа",x:1310,color:"#4caa75",
- rule:"Щоб знайти дріб від числа, помнож число на цей дріб.",
+ name:"Знаходження дробу від числа",
+ x:28,color:"#4caa75",
+ rule:"Щоб знайти дріб від числа, потрібно це число помножити на заданий дріб.",
  tasks:[
-  {q:`Знайди ${f(3,5)} від 20.`,a:["10","12","15","8"],c:1,e:"20 · 3/5 = 60/5 = 12."},
-  {q:`Знайди ${f(2,3)} від 18.`,a:["9","10","12","14"],c:2,e:"18 · 2/3 = 36/3 = 12."}
+  {q:`Знайди ${F(3,5)} від 20.`,
+   a:["10","12","15","8"],c:1,
+   e:"20 · 3/5 = 60/5 = 12."},
+  {q:`Знайди ${F(2,3)} від 18.`,
+   a:["9","10","12","14"],c:2,
+   e:"18 · 2/3 = 36/3 = 12."},
+  {q:`Знайди ${F(5,8)} від 40.`,
+   a:["20","25","30","15"],c:1,
+   e:"40 · 5/8 = 200/8 = 25."},
+  {q:`Знайди ${F(7,10)} від 50.`,
+   a:["30","25","35","40"],c:2,
+   e:"50 · 7/10 = 350/10 = 35."}
  ]
 },
 {
- name:"Знаходження числа за значенням дробу",x:1600,color:"#d0a83d",
- rule:"Щоб знайти число, поділи дане значення на заданий дріб.",
+ name:"Знаходження числа за значенням дробу",
+ x:34,color:"#d0a83d",
+ rule:"Щоб знайти число за значенням його дробу, потрібно дане значення поділити на цей дріб.",
  tasks:[
-  {q:`${f(3,4)} числа дорівнює 12. Знайди число.`,a:["9","15","16","18"],c:2,e:"12 : 3/4 = 12 · 4/3 = 16."},
-  {q:`${f(2,5)} числа дорівнює 8. Знайди число.`,a:["16","20","24","12"],c:1,e:"8 : 2/5 = 8 · 5/2 = 20."}
+  {q:`${F(3,4)} числа дорівнює 12. Знайди число.`,
+   a:["9","15","16","18"],c:2,
+   e:"12 : 3/4 = 12 · 4/3 = 16."},
+  {q:`${F(2,5)} числа дорівнює 8. Знайди число.`,
+   a:["16","20","24","12"],c:1,
+   e:"8 : 2/5 = 8 · 5/2 = 20."},
+  {q:`${F(5,6)} числа дорівнює 25. Знайди число.`,
+   a:["20","25","30","35"],c:2,
+   e:"25 : 5/6 = 25 · 6/5 = 30."},
+  {q:`${F(7,8)} числа дорівнює 21. Знайди число.`,
+   a:["21","24","28","30"],c:1,
+   e:"21 : 7/8 = 21 · 8/7 = 24."}
  ]
 }
 ];
 
-let playerX=30;
-let camera=0;
+// ======================================
+// ОБ'ЄМНА КАРТА MINECRAFT
+// ======================================
+
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+const W=1000,H=520;
+const TILE=32;
+const MAP_X=40,MAP_Y=14;
+
+let playerX=1;
+let cameraX=0,cameraY=0;
+let keys={left:false,right:false};
 let score=0;
-let keys={};
-let active=-1;
-let taskIndex=0;
-let answered=false;
+let active=-1,taskIndex=0,answered=false;
 let completed=new Set();
 
-function block(x,y,size,color){
- ctx.fillStyle=color;ctx.fillRect(x,y,size,size);
- ctx.fillStyle="rgba(255,255,255,.18)";ctx.fillRect(x,y,size,4);
- ctx.fillRect(x,y,4,size);
- ctx.fillStyle="rgba(0,0,0,.18)";
- ctx.fillRect(x+size-4,y,4,size);
- ctx.fillRect(x,y+size-4,size,4);
+function project(x,y){
+ return {
+  x:W/2+(x-y)*TILE-cameraX,
+  y:65+(x+y)*16-cameraY
+ };
 }
 
-function draw(){
- ctx.clearRect(0,0,W,400);
- ctx.fillStyle="#86cdeb";ctx.fillRect(0,0,W,400);
+function polygon(points,color){
+ ctx.fillStyle=color;
+ ctx.beginPath();
+ ctx.moveTo(points[0][0],points[0][1]);
+ for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);
+ ctx.closePath();ctx.fill();
+}
+
+function diamond(x,y,color){
+ polygon([[x,y-16],[x+32,y],[x,y+16],[x-32,y]],color);
+}
+
+function cube(x,y,color,height=20){
+ const p=project(x,y);
+ let sx=p.x,sy=p.y;
+ // Лівий бік
+ polygon([
+  [sx-32,sy],[sx,sy+16],[sx,sy+16+height],[sx-32,sy+height]
+ ],shade(color,-35));
+ // Правий бік
+ polygon([
+  [sx+32,sy],[sx,sy+16],[sx,sy+16+height],[sx+32,sy+height]
+ ],shade(color,-55));
+ // Верх
+ diamond(sx,sy,color);
+}
+
+function shade(hex,amount){
+ let v=parseInt(hex.slice(1),16);
+ let r=Math.max(0,Math.min(255,(v>>16)+amount));
+ let g=Math.max(0,Math.min(255,((v>>8)&255)+amount));
+ let b=Math.max(0,Math.min(255,(v&255)+amount));
+ return `rgb(${r},${g},${b})`;
+}
+
+function drawGround(){
+ for(let sum=0;sum<MAP_X+MAP_Y;sum++){
+  for(let x=0;x<MAP_X;x++){
+   let y=sum-x;
+   if(y<0||y>=MAP_Y)continue;
+   let road=(y>=5&&y<=7);
+   let river=(y===1||y===2);
+   let color="#65a943";
+   if(road)color="#a98251";
+   if(river)color="#329ed1";
+   if(road&&river)color="#329ed1";
+   cube(x,y,color,12);
+   if(road){
+    let p=project(x,y);
+    ctx.strokeStyle="#79562f";
+    ctx.lineWidth=1;
+    diamond(p.x,p.y+1,"#b58b54");
+   }
+  }
+ }
+}
+
+function drawTree(x,y){
+ cube(x,y,"#80502c",48);
+ cube(x,y,"#338b3b",15);
+ let p=project(x,y);
+ cube(x-0.5,y,"#3d9c43",8);
+ cube(x+0.5,y,"#3d9c43",8);
+}
+
+function drawRiver(){
+ // Річка вже позначена водяними блоками.
+ // Додаємо світлі відблиски.
+ for(let x=0;x<MAP_X;x+=2){
+  let p=project(x,1);
+  polygon([
+   [p.x-15,p.y+2],[p.x-3,p.y+8],
+   [p.x+10,p.y+2],[p.x-2,p.y-4]
+  ],"#83d8ef");
+ }
+}
+
+function drawCave(x,y){
+ cube(x-1,y,"#777b70",30);
+ cube(x,y,"#656b62",42);
+ cube(x+1,y,"#777b70",30);
+ let p=project(x,y);
+ polygon([
+  [p.x-23,p.y-3],[p.x+23,p.y-3],
+  [p.x+17,p.y+23],[p.x-17,p.y+23]
+ ],"#17201d");
+ polygon([
+  [p.x-13,p.y+22],[p.x-8,p.y+5],
+  [p.x+8,p.y+5],[p.x+13,p.y+22]
+ ],"#090f0e");
+}
+
+function drawStation(s,i){
+ let p=project(s.x,6);
+ let x=p.x,y=p.y;
+ // Підстава
+ cube(s.x,6,s.color,24);
+ cube(s.x,6,shade(s.color,20),7);
+ // Прапорець
+ ctx.fillStyle="#4c3824";
+ ctx.fillRect(x-2,y-73,4,48);
+ polygon([
+  [x,y-73],[x+30,y-64],[x,y-53]
+ ],"#f4d24d");
+ // Номер
+ ctx.fillStyle="white";
+ ctx.font="bold 16px Arial";
+ ctx.textAlign="center";
+ ctx.fillText(String(i+1),x,y-84);
+ // Назва
+ ctx.font="bold 12px Arial";
+ ctx.fillStyle="#17311d";
+ ctx.fillText(s.name.length>24?s.name.slice(0,23)+"…":s.name,x,y+55);
+ if(completed.has(i)){
+  ctx.font="22px Arial";
+  ctx.fillText("💎",x,y-38);
+ }
+}
+
+function drawPlayer(){
+ let p=project(playerX,6);
+ let x=p.x,y=p.y-40;
+ // Тінь
+ ctx.fillStyle="#29432c";
+ ctx.beginPath();
+ ctx.ellipse(x,y+56,20,7,0,0,Math.PI*2);
+ ctx.fill();
+ // Голова
+ cubeAt(x,y,"#d9a06c",22);
+ // Волосся
+ ctx.fillStyle="#573722";
+ ctx.fillRect(x-11,y-3,22,7);
+ // Очі
+ ctx.fillStyle="#263b58";
+ ctx.fillRect(x-7,y+7,4,4);
+ ctx.fillRect(x+4,y+7,4,4);
+ // Тулуб
+ cubeAt(x,y+26,"#2874a5",26);
+ // Ноги
+ ctx.fillStyle="#344b87";
+ ctx.fillRect(x-10,y+52,9,14);
+ ctx.fillRect(x+2,y+52,9,14);
+ ctx.fillStyle="#30291f";
+ ctx.fillRect(x-11,y+64,11,4);
+ ctx.fillRect(x+1,y+64,11,4);
+ // Руки
+ ctx.fillStyle="#d9a06c";
+ ctx.fillRect(x-16,y+28,6,22);
+ ctx.fillRect(x+10,y+28,6,22);
+}
+
+function cubeAt(x,y,color,size){
+ ctx.fillStyle=shade(color,-35);
+ ctx.fillRect(x-size/2,y,size,size);
+ ctx.fillStyle=shade(color,10);
+ ctx.fillRect(x-size/2,y,size,5);
+ ctx.fillStyle=color;
+ ctx.fillRect(x-size/2+4,y+4,size-8,size-8);
+}
+
+function drawDecorations(){
+ // Дерева
+ [[2,4],[7,3],[12,10],[18,3],[24,10],[31,3],[37,10]].forEach(v=>drawTree(v[0],v[1]));
+ // Камені
+ [[5,10],[14,11],[20,2],[30,10],[38,3]].forEach(v=>cube(v[0],v[1],"#777d75",25));
+ // Печери
+ drawCave(25,2);
+ drawCave(36,11);
+}
+
+function drawWorld(){
+ ctx.clearRect(0,0,W,H);
+ let sky=ctx.createLinearGradient(0,0,0,H);
+ sky.addColorStop(0,"#75c5ed");
+ sky.addColorStop(1,"#d4e9c6");
+ ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
 
  // Хмари
- for(let i=0;i<5;i++){
-  let x=(i*250-camera*.15)%(W+100);
-  ctx.fillStyle="white";ctx.fillRect(x,55,65,18);
-  ctx.fillRect(x+15,42,45,18);
+ for(let i=0;i<6;i++){
+  let x=((i*220-cameraX*.18)%(W+150)+W+150)%(W+150)-70;
+  ctx.fillStyle="#fff";
+  ctx.fillRect(x,45,65,18);
+  ctx.fillRect(x+15,31,45,18);
  }
+ drawGround();
+ drawRiver();
+ drawDecorations();
+ stations.forEach((s,i)=>drawStation(s,i));
+ drawPlayer();
 
- // Пагорби
- for(let i=0;i<8;i++){
-  let x=(i*260-camera*.2)%(W+260)-80;
-  ctx.fillStyle="#77b76a";ctx.fillRect(x,210,180,110);
- }
-
- // Земля
- ctx.fillStyle="#80552e";ctx.fillRect(0,ground,W,80);
- for(let x=-camera%40;x<W;x+=40)block(x,ground,40,"#69a843");
-
- // Дерева
- [300,600,900,1200,1500,1750].forEach(wx=>{
-  let x=wx-camera;
-  if(x>-80&&x<W+80){
-   ctx.fillStyle="#76502b";ctx.fillRect(x+15,250,18,70);
-   block(x,205,48,"#39843c");
-   block(x-12,225,30,"#39843c");
-   block(x+30,225,30,"#39843c");
-  }
- });
-
- // Станції
- stations.forEach((s,i)=>{
-  let x=s.x-camera;
-  block(x-25,268,50,s.color);
-  ctx.fillStyle="#172817";ctx.font="bold 14px Arial";
-  ctx.textAlign="center";ctx.fillText(i+1,x,250);
-  ctx.fillStyle="white";ctx.font="bold 12px Arial";
-  ctx.fillText(s.name,x,350);
-  if(completed.has(i))ctx.fillText("💎",x,260);
- });
-
- // Персонаж
- let x=playerX-camera;
- block(x+5,playerY(),20,"#d8a06c");
- block(x+5,playerY()-3,20,"#593a25");
- ctx.fillStyle="#263b58";
- ctx.fillRect(x+9,playerY()+7,4,4);
- ctx.fillRect(x+19,playerY()+7,4,4);
- block(x+3,playerY()+20,24,"#2874a5");
- block(x+3,playerY()+40,10,14,"#334b86");
- block(x+17,playerY()+40,10,14,"#334b86");
- ctx.fillStyle="#d8a06c";
- ctx.fillRect(x,playerY()+22,5,15);
- ctx.fillRect(x+25,playerY()+22,5,15);
-
- let near=nearStation();
- if(near!==-1){
-  ctx.strokeStyle="#fff36a";ctx.lineWidth=3;
-  ctx.strokeRect(stations[near].x-camera-31,264,62,62);
+ let n=nearStation();
+ if(n!==-1){
+  let p=project(stations[n].x,6);
+  ctx.strokeStyle="#fff36a";ctx.lineWidth=4;
+  ctx.beginPath();ctx.arc(p.x,p.y-22,37,0,Math.PI*2);ctx.stroke();
  }
 }
-function playerY(){return ground-54;}
+
+// ======================================
+// РУХ ПЕРСОНАЖА
+// ======================================
 
 function nearStation(){
- let found=-1,dist=70;
+ let found=-1;
+ let distance=1.25;
  stations.forEach((s,i)=>{
-  let d=Math.abs(playerX+15-s.x);
-  if(d<dist&&!completed.has(i)){dist=d;found=i;}
+  let d=Math.abs(playerX-s.x);
+  if(d<distance&&!completed.has(i)){
+   distance=d;found=i;
+  }
  });
  return found;
 }
 
-function gameLoop(){
+function update(){
  if(document.getElementById("task").style.display!=="block"){
-  if(keys.left)playerX-=4;
-  if(keys.right)playerX+=4;
-  playerX=Math.max(0,Math.min(world-30,playerX));
+  if(keys.left)playerX-=0.075;
+  if(keys.right)playerX+=0.075;
  }
- camera=Math.max(0,Math.min(world-W,playerX-350));
- draw();
+ playerX=Math.max(0,Math.min(39,playerX));
 
- let near=nearStation();
- document.getElementById("open").disabled=near===-1;
- document.getElementById("status").textContent=
-  near===-1?"Подорож світом":stations[near].name;
+ cameraX=(playerX-8)*TILE;
+ cameraY=(playerX-8)*16;
+
+ drawWorld();
+
+ let n=nearStation();
+ document.getElementById("open").disabled=n===-1;
+ document.getElementById("stationStatus").textContent=
+  n===-1?"Подорож світом":stations[n].name;
+
  document.getElementById("hint").textContent=
-  near===-1?"Рухай персонажа. Підійди до кольорового блока станції. Натисни E.":
-  "Ти біля станції «"+stations[near].name+"». Натисни E або кнопку нижче.";
+  n===-1?
+  "Досліджуй кубічний світ. Рухай персонажа до наступної станції.":
+  "Ти біля станції «"+stations[n].name+"». Натисни E або «Відкрити станцію».";
 
- requestAnimationFrame(gameLoop);
+ requestAnimationFrame(update);
 }
+
+// ======================================
+// ЗАВДАННЯ ТА ПЕРЕВІРКА
+// ======================================
 
 function openStation(){
  let n=nearStation();
  if(n===-1)return;
- active=n;taskIndex=0;showTask();
+ active=n;taskIndex=0;
+ showTask();
 }
 
 function showTask(){
- let s=stations[active],t=s.tasks[taskIndex];
+ let s=stations[active];
+ let t=s.tasks[taskIndex];
+
  document.getElementById("task").style.display="block";
  document.getElementById("taskTitle").textContent=
-  "Станція "+(active+1)+": "+s.name;
- document.getElementById("rule").innerHTML="<b>Правило:</b> "+s.rule;
- document.getElementById("question").innerHTML=t.q;
+  "СТАНЦІЯ "+(active+1)+": "+s.name;
+ document.getElementById("rule").innerHTML=
+  "<b>📘 Правило:</b> "+s.rule;
+ document.getElementById("question").innerHTML=
+  "Завдання "+(taskIndex+1)+" із "+s.tasks.length+": "+t.q;
+
  document.getElementById("feedback").textContent="";
  document.getElementById("next").style.display="none";
  document.getElementById("answers").innerHTML="";
@@ -271,15 +570,18 @@ function showTask(){
   let b=document.createElement("button");
   b.className="answer";
   b.innerHTML=(i+1)+") "+a;
-  b.onclick=()=>choose(i,b);
+  b.onclick=()=>chooseAnswer(i,b);
   document.getElementById("answers").appendChild(b);
  });
- document.getElementById("task").scrollIntoView({behavior:"smooth",block:"nearest"});
+ document.getElementById("task").scrollIntoView({
+  behavior:"smooth",block:"nearest"
+ });
 }
 
-function choose(i,button){
+function chooseAnswer(i,button){
  if(answered)return;
  answered=true;
+
  let t=stations[active].tasks[taskIndex];
  let all=[...document.querySelectorAll(".answer")];
  all[t.c].classList.add("correct");
@@ -288,12 +590,13 @@ function choose(i,button){
   score+=10;
   document.getElementById("score").textContent=score;
   document.getElementById("feedback").textContent=
-   "✅ Правильно! +10 діамантів. "+t.e;
+   "✅ Правильно! Ти отримав 10 діамантів. "+t.e;
  }else{
   button.classList.add("wrong");
   document.getElementById("feedback").textContent=
-   "Правильна відповідь підсвічена. "+t.e;
+   "❌ Цього разу не вийшло. Правильну відповідь позначено зеленим. "+t.e;
  }
+
  document.getElementById("next").style.display="inline-block";
  document.getElementById("next").textContent=
   taskIndex===stations[active].tasks.length-1?
@@ -302,15 +605,21 @@ function choose(i,button){
 
 document.getElementById("next").onclick=()=>{
  if(!answered)return;
+
  if(taskIndex<stations[active].tasks.length-1){
-  taskIndex++;showTask();
+  taskIndex++;
+  showTask();
  }else{
   completed.add(active);
   document.getElementById("task").style.display="none";
+  document.getElementById("progress").textContent=
+   completed.size+" / 6";
   active=-1;
+
   if(completed.size===stations.length){
    document.getElementById("finish").style.display="block";
    document.getElementById("finalScore").textContent=score;
+   document.getElementById("finish").scrollIntoView({behavior:"smooth"});
   }
  }
 };
@@ -319,29 +628,49 @@ document.getElementById("close").onclick=()=>{
  document.getElementById("task").style.display="none";
  active=-1;
 };
+
 document.getElementById("open").onclick=openStation;
 
+// ======================================
+// КЛАВІАТУРА ТА МОБІЛЬНІ КНОПКИ
+// ======================================
+
 document.addEventListener("keydown",e=>{
- if(e.key==="ArrowLeft"||e.key==="ArrowRight")e.preventDefault();
- if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")keys.left=true;
- if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")keys.right=true;
- if((e.key==="e"||e.key==="E")&&document.getElementById("task").style.display!=="block")openStation();
+ if(["ArrowLeft","ArrowRight"].includes(e.key))e.preventDefault();
+
+ if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")
+  keys.left=true;
+
+ if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")
+  keys.right=true;
+
+ if((e.key==="e"||e.key==="E")&&
+ document.getElementById("task").style.display!=="block"){
+  openStation();
+ }
 });
+
 document.addEventListener("keyup",e=>{
- if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")keys.left=false;
- if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")keys.right=false;
+ if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")
+  keys.left=false;
+ if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")
+  keys.right=false;
 });
 
-function hold(id,direction){
+function holdButton(id,direction){
  let b=document.getElementById(id);
- b.addEventListener("pointerdown",e=>{e.preventDefault();keys[direction]=true;});
- ["pointerup","pointerleave","pointercancel"].forEach(ev=>
-  b.addEventListener(ev,()=>keys[direction]=false));
+ b.addEventListener("pointerdown",e=>{
+  e.preventDefault();keys[direction]=true;
+ });
+ ["pointerup","pointerleave","pointercancel"].forEach(event=>{
+  b.addEventListener(event,()=>keys[direction]=false);
+ });
 }
-hold("left","left");
-hold("right","right");
 
-gameLoop();
+holdButton("left","left");
+holdButton("right","right");
+
+update();
 </script>
 </body>
 </html>
